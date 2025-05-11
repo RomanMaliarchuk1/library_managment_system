@@ -1,6 +1,5 @@
-import pytest
 from datetime import datetime, timezone
-
+import pytest
 
 # Тест на позичення книги
 def test_borrow_book(client):
@@ -11,7 +10,7 @@ def test_borrow_book(client):
     book_resp = client.post("/api/books/", json={
         "title": "Test Book",
         "publication_year": 2020,
-        "isbn": "1112223334",
+        "isbn": "1111112223334",
         "quantity": 1,
         "author_ids": [],
         "category_ids": []
@@ -29,7 +28,7 @@ def test_borrow_book(client):
     assert response.status_code == 201
     assert response.json()["user_id"] == user_id
     assert response.json()["book_id"] == book_id
-    assert response.json()["return_status"] == "not returned"  # Ensure return_status is correct
+    assert response.json()["return_status"] == "not returned"
 
 
 # Повернення книги
@@ -40,7 +39,7 @@ def test_return_book(client):
     book_resp = client.post("/api/books/", json={
         "title": "Book to Return",
         "publication_year": 2021,
-        "isbn": "2223334445",
+        "isbn": "222333444345",
         "quantity": 1,
         "author_ids": [],
         "category_ids": []
@@ -69,7 +68,7 @@ def test_get_borrowed_by_user(client):
     book = client.post("/api/books/", json={
         "title": "Book A",
         "publication_year": 2022,
-        "isbn": "5556667778",
+        "isbn": "551256667778",
         "quantity": 1,
         "author_ids": [],
         "category_ids": []
@@ -96,7 +95,7 @@ def test_get_borrowed_by_book(client):
     book = client.post("/api/books/", json={
         "title": "Book B",
         "publication_year": 2023,
-        "isbn": "7778889990",
+        "isbn": "777318889990",
         "quantity": 1,
         "author_ids": [],
         "category_ids": []
@@ -123,7 +122,7 @@ def test_delete_borrowed_book(client):
     book = client.post("/api/books/", json={
         "title": "Book to Delete",
         "publication_year": 2024,
-        "isbn": "1010101010",
+        "isbn": "101310101010",
         "quantity": 1,
         "author_ids": [],
         "category_ids": []

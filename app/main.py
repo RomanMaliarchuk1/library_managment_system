@@ -1,10 +1,10 @@
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import time
+import subprocess
 
 from app.utils.logger import setup_logging
-from app.db.database import create_db_and_tables
 from app.api import books, authors, categories, users, borrowed_books
 
 logger = setup_logging()
@@ -13,9 +13,15 @@ logger = setup_logging()
 # Define the lifespan context manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting database initialization")
-    create_db_and_tables()
-    logger.info("Database initialization completed")
+    logger.info("Starting database migrations")
+
+    try:
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
+        logger.info("Database migrations completed")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Database migrations failed: {e}")
+        raise
+
     logger.info("Application Started")
     yield
 
@@ -25,7 +31,7 @@ async def lifespan(app: FastAPI):
 # Create the FastAPI app with the lifespan handler
 app = FastAPI(
     title="Library Management System API",
-    description="API for managing a library system with books, authors etc.",
+    description="API for managing a library system with books, authors, etc.",
     version="0.0.1",
     lifespan=lifespan
 )

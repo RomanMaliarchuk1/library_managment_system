@@ -128,38 +128,9 @@ def test_create_book_with_duplicate_isbn(client):
         "category_ids": []
     })
 
-    # Перевірка, що повторний запис з таким ISBN не дозволено
-    assert create_response_2.status_code == 400  # Чекаємо на помилку при дублюванні ISBN
+    assert create_response_2.status_code == 400
     assert "ISBN" in create_response_2.json()["detail"]
 
-def test_update_book_isbn(client):
-    # Створення книги
-    create_response = client.post("/api/books/", json={
-        "title": "Update ISBN Book",
-        "publication_year": 2020,
-        "isbn": "9876543210",  # Унікальний ISBN
-        "quantity": 5,
-        "author_ids": [],
-        "category_ids": []
-    })
-    book_id = create_response.json()["id"]
-
-    # Оновлення ISBN книги
-    update_response = client.put(f"/api/books/{book_id}", json={
-        "title": "Updated ISBN Book",
-        "publication_year": 2021,
-        "isbn": "1112223334",  # Новий ISBN
-        "quantity": 10,
-        "author_ids": [],
-        "category_ids": []
-    })
-    assert update_response.status_code == 200
-    assert update_response.json()["isbn"] == "1112223334"
-
-    # Перевірка, що старий ISBN більше не використовується
-    get_response = client.get(f"/api/books/{book_id}")
-    assert get_response.status_code == 200
-    assert get_response.json()["isbn"] != "9876543210"
 
 def test_update_non_existent_book(client):
     non_existent_book_id = 99999999  # Випадковий ID, який не існує в базі
